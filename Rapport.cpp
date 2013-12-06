@@ -24,8 +24,8 @@ Rapport::Rapport(string& _nomRapport, int _nbHitsMin = 1, int _creneauMin = -1, 
 Rapport::~Rapport()
 {
 	consultations.clear();
-	noeuds.clear();
 	relations.clear();
+	noeuds.clear();
 }
 
 bool Rapport::ajouterLigne(const LigneLog *ligne)
@@ -35,17 +35,19 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 	{
 		return false;
 	}
-
-	int dotPos = ligne->cible.rfind('.');
-	string extension = ligne->cible.substr(dotPos,ligne->cible.length()-dotPos);
-	for( list<string>::const_iterator it = TYPES_EXCLUS.begin() ; it != TYPES_EXCLUS.end() ; ++it )
+	
+	if(exclusionFichiers)
 	{
-		if(it->compare(extension) == 0)
+		int dotPos = ligne->cible.rfind('.');
+		string extension = ligne->cible.substr(dotPos,ligne->cible.length()-dotPos);
+		for( list<string>::const_iterator it = TYPES_EXCLUS.begin() ; it != TYPES_EXCLUS.end() ; ++it )
 		{
-			return false;
+			if(it->compare(extension) == 0)
+			{
+				return false;
+			}
 		}
 	}
-	
 
 	//Changements dans la structure noeuds
 	noeud noeudLocalc;
@@ -56,7 +58,7 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 	if(strLocale.compare(LOCALHOST) == 0)
 	{
 		noeudLocalr.estLocal = true;
-		noeudLocalr.texte = ligne->referer.substr(LOCALHOST.length(), (ligne->referer.length()-LOCALHOST.length())); // Que signifie ce 31 ??
+		noeudLocalr.texte = ligne->referer.substr(LOCALHOST.length(), (ligne->referer.length()-LOCALHOST.length()));
 	}
 	else
 	{

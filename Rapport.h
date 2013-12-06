@@ -24,7 +24,6 @@ struct noeud
 	int id;
 	string texte;
 	bool estLocal;
-	int nbCons;
 
 	bool operator == (const noeud &n) const
 	{
@@ -33,7 +32,7 @@ struct noeud
 
 	bool operator < (const noeud &n) const
 	{
-		if((estLocal && !(n.estLocal)) || (estLocal == n.estLocal && nbCons > n.nbCons))
+		if(estLocal && !(n.estLocal))
 		{
 			return true;
 		}

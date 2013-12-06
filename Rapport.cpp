@@ -83,7 +83,7 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 	if(strLocale.compare(LOCALHOST) == 0)
 	{
 		noeudLocalr.estLocal = true;
-		noeudLocalr.texte = ligne->referer.substr(32, (ligne->referer.length()-31)); // Que signifie ce 31 ??
+		noeudLocalr.texte = ligne->referer.substr(LOCALHOST.length(), (ligne->referer.length()-LOCALHOST.length())); // Que signifie ce 31 ??
 	}
 	else
 	{
@@ -99,14 +99,14 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 	
 	for (set<noeud>::iterator it = noeuds.begin(); it != noeuds.end() && (!cibleExiste || !refererExiste) ; ++it)
 	{
-		if (!cibleExiste && it->estLocal && it->texte.compare(ligne->cible) == 0)
+		if (!cibleExiste && it->estLocal && it->texte.compare(noeudLocalc.texte) == 0)
 		{
 			cibleExiste = true;
 			//itCibEx = it;
 			cibleId = it->id;
 			(consultations.at(it->id))++;
 		}
-		if (!refererExiste && it->texte.compare(ligne->referer) == 0)
+		if (!refererExiste && it->texte.compare(noeudLocalr.texte) == 0)
 		{
 			refererExiste = true;
 			//itRefEx = it;

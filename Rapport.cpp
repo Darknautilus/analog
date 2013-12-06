@@ -30,29 +30,12 @@ Rapport::~Rapport()
 
 bool Rapport::ajouterLigne(const LigneLog *ligne)
 {
-	//Vérification paramètre temporel
-	//if (creneauMin < 0)
-	//{
-	//	return false;
-	//}
+	// Vérification paramètre temporel
+	if (creneauMin >= 0 && ligne->creneau != creneauMin)
+	{
+		return false;
+	}
 
-	////Vérification paramètre d'extension
-	//string extension = "";
-	//string lcible = ligne->cible;
-	//string lreferer = ligne->referer;
-	//int strlencib = lcible.length();
-	//for (int i=strlencib-1; i>=0; i--)
-	//{
-	//	if(lcible.at(i)!='.')
-	//	{
-	//		extension += lcible.at(i);
-	//	}
-	//	else
-	//	{
-	//		i=-1;
-	//	}
-	//}
-	
 	int dotPos = ligne->cible.rfind('.');
 	string extension = ligne->cible.substr(dotPos,ligne->cible.length()-dotPos);
 	for( list<string>::const_iterator it = TYPES_EXCLUS.begin() ; it != TYPES_EXCLUS.end() ; ++it )
@@ -64,21 +47,11 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 	}
 	
 
-	//list <string> lextension {extension};
-	//list <string> motsCommuns;
-	//set_intersection(TYPES_EXCLUS.begin(), TYPES_EXCLUS.end(), lextension.begin(), lextension.end(), motsCommuns.begin());
-	//if (!motsCommuns.empty())
-	//{
-	//	return false;
-	//}
-  
 	//Changements dans la structure noeuds
 	noeud noeudLocalc;
 	noeud noeudLocalr;
 	noeudLocalc.texte = ligne->cible;
 	noeudLocalc.estLocal = true;
-	//noeudLocalc.id = dernierId++;
-	//noeudLocalr.id = dernierId++;
 	string strLocale = ligne->referer.substr(0,LOCALHOST.length());    
 	if(strLocale.compare(LOCALHOST) == 0)
 	{
@@ -94,22 +67,18 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 	bool refererExiste = false;
 	int cibleId;
 	int refId;
-	//set<noeud>::iterator itCibEx;
-  //set<noeud>::iterator itRefEx;
 	
 	for (set<noeud>::iterator it = noeuds.begin(); it != noeuds.end() && (!cibleExiste || !refererExiste) ; ++it)
 	{
 		if (!cibleExiste && it->estLocal && it->texte.compare(noeudLocalc.texte) == 0)
 		{
 			cibleExiste = true;
-			//itCibEx = it;
 			cibleId = it->id;
 			(consultations.at(it->id))++;
 		}
 		if (!refererExiste && it->texte.compare(noeudLocalr.texte) == 0)
 		{
 			refererExiste = true;
-			//itRefEx = it;
 			refId = it->id;
 		}
 	}
@@ -127,20 +96,6 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 		noeudLocalr.id = refId;
 		noeuds.insert(noeudLocalr);
 	}
-
-	//if (cibleExiste)
-	//{
-	//	noeudLocalc.nbCons++;
-	//	noeuds.insert(noeudLocalc);
-	//}
-	//else if (refererExiste) 
-	//{
-	//	noeuds.insert(noeudLocalr); 
-	//}
-	//else if (!cibleExiste)
-	//{
-	//	itCibEx->nbCons++;
-	//}
 
 	//Changements dans la structure relations
 	relation relLoc;

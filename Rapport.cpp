@@ -142,18 +142,12 @@ bool Rapport::genererRapport() const
 		outPutFile.open(nomRapport);
 	}
 	
-	if (creneauMin>=0)
-	{
-		cout << "Attention, seules les logs comprises entre " << creneauMin << "h et " << creneauMin+1 << "h seront prises en compte" << endl;
-	}
+	afficherTopDocs(consultations.size());
 
 	for(set<noeud>::iterator it=noeuds.begin();it!=noeuds.end(); ++it)
 	{
 		if(consultations.at(it->id) >= nbHitsMin)
 		{	
-			
-			cout << it->texte << " (" << consultations.at(it->id) << "hits)" << endl;
-
 			if (!nomRapport.empty())
 			{
 				outPutFile << "node" << it->id << "[label=\"" << it->texte << "\"];" << endl;
@@ -177,6 +171,54 @@ bool Rapport::genererRapport() const
 	return true;
 }
 
-void Rapport::afficherTopDocs() const
+void Rapport::afficherTopDocs(const int nbDocs) const
 {
+	afficherContraintes();
+
+	multimap<int,int> sortedNbCons;
+	for(map<int,int>::const_iterator it = consultations.begin(); it != consultations.end(); ++it)
+	{
+		sortedNbCons.insert(pair<int,int>(it->second, it->first));
+	}
+	
+	int i = 0;
+	for(map<int,int>::iterator it = sortedNbCons.begin(); it != sortedNbCons.end() && i < nbDocs; ++it)
+	{
+		for(set<noeud>::iterator itset = noeuds.begin(); itset != noeuds.end() && itset->estLocal; ++itset)
+		{
+			if(itset->id == it->second)
+			{
+				cout << itset->texte << " (" << it->first << " hits)" << endl;
+				break;
+			}
+		}
+		i++;
+	}
+
+}
+
+void Rapport::afficherContraintes() const
+{
+	if(exclusionFichiers)
+	{
+		cout << "Les fichiers de types suivants n'ont pas été pris en compte : ";
+		for(list<string>::const_iterator it = TYPES_EXCLUS.begin(); it != TYPES_EXCLUS.end(); ++it)
+		{
+			if(it != TYPES_EXCLUS.begin())
+			{
+				cout << ", ";
+			}
+			cout << *it;
+		}
+		cout << endl;
+	}
+	if(nbHitsMin > 1)
+	{
+		cout << "Seuls les documents consultés " << nbHitsMin << " fois ou plus ont été comptabilisés" << endl;
+	}
+	if (creneauMin >= 0)
+	{
+		cout << "Seuls les documents consultés entre " << creneauMin << "h et " << creneauMin+1 << "h ont été comptabilisés" << endl;
+	}
+
 }

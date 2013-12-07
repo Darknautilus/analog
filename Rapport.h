@@ -75,15 +75,14 @@ const int NB_TOP_DOCS = 10;
 
 class Rapport
 {
-	friend noeud;
-
   public:
     Rapport(string& _nomRapport, int _nbHitsMin, int _creneauMin, bool _exclusionFichiers, int dernierId);
     virtual ~Rapport();
 
-    bool ajouterLigne(const LigneLog *ligne);
+    bool ajouterLigne(const LigneLog *);
     bool genererRapport() const;
-    void afficherTopDocs() const;
+    void afficherTopDocs(const int) const;
+		void afficherContraintes() const;
 
   private:
     string nomRapport;

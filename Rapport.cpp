@@ -144,15 +144,15 @@ bool Rapport::genererRapport() const
 	
 	if (creneauMin>=0)
 	{
-		cout<<"Attention, seules les logs comprises entre "<< creneauMin << " et " << creneauMin+1 << "h seront prises en compte" << endl;
+		cout << "Attention, seules les logs comprises entre " << creneauMin << "h et " << creneauMin+1 << "h seront prises en compte" << endl;
 	}
 
 	for(set<noeud>::iterator it=noeuds.begin();it!=noeuds.end(); ++it)
 	{
-		if(it->nbCons >= nbHitsMin)
+		if(consultations.at(it->id) >= nbHitsMin)
 		{	
 			
-			cout<<(*it).texte<<" ("<<(*it).nbCons<<"hits)"<<endl;
+			cout << it->texte << " (" << consultations.at(it->id) << "hits)" << endl;
 
 			if (!nomRapport.empty())
 			{
@@ -163,7 +163,7 @@ bool Rapport::genererRapport() const
 	
 	for(set<relation>::iterator it=relations.begin(); it!=relations.end(); ++it)
 	{
-		if ((it->src->nbCons >= nbHitsMin) && (it->dest->nbCons >= nbHitsMin))
+		if (!nomRapport.empty() && (consultations.at(it->src->id) >= nbHitsMin) && (consultations.at(it->dest->id) >= nbHitsMin))
 		{
 			outPutFile << "node" << it->src->id << "-> node" << it->dest->id << "[label=\"" << it->nbTot << "\"];" << endl;  
 		}

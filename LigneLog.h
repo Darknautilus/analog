@@ -34,4 +34,4 @@ class LigneLog : LecteurFichier::LigneFichier
 
 };
 
-#endif /* LIGNELOG_H_ */
+#endif /* LIGNELOG_H */

@@ -46,18 +46,18 @@ struct noeud
 
 struct relation
 {
-  noeud *src;
-  noeud *dest;
+  int src;
+  int dest;
   int nbTot;
 	
 	bool operator == (const relation &r) const
 	{
-		return (*(this->src) == *(r.src) && *(this->dest) == *(r.dest));
+		return (src == r.src && dest == r.dest);
 	}
 
   bool operator < (const relation &r) const
   {
-    if ((src->id < r.src->id) || (src->id == r.src->id && nbTot < r.nbTot))
+    if (src < r.src || (src == r.src && nbTot < r.nbTot))
     {
       return true;
     }
@@ -75,6 +75,8 @@ const int NB_TOP_DOCS = 10;
 
 class Rapport
 {
+	friend noeud;
+
   public:
     Rapport(string& _nomRapport, int _nbHitsMin, int _creneauMin, bool _exclusionFichiers, int dernierId);
     virtual ~Rapport();

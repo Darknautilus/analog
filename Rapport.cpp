@@ -103,8 +103,8 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 
 	//Changements dans la structure relations
 	relation relLoc;
-	relLoc.dest = &noeudLocalc;
-	relLoc.src = &noeudLocalr;
+	relLoc.dest = noeudLocalc.id;
+	relLoc.src = noeudLocalr.id;
 	relLoc.nbTot = 1;
 	bool relEx = false;
 
@@ -163,9 +163,9 @@ bool Rapport::genererRapport() const
 	
 	for(set<relation>::iterator it=relations.begin(); it!=relations.end(); ++it)
 	{
-		if (!nomRapport.empty() && (consultations.at(it->src->id) >= nbHitsMin) && (consultations.at(it->dest->id) >= nbHitsMin))
+		if (!nomRapport.empty() && (consultations.at(it->src) >= nbHitsMin) && (consultations.at(it->dest) >= nbHitsMin))
 		{
-			outPutFile << "node" << it->src->id << "-> node" << it->dest->id << "[label=\"" << it->nbTot << "\"];" << endl;  
+			outPutFile << "node" << it->src << "-> node" << it->dest << "[label=\"" << it->nbTot << "\"];" << endl;  
 		}
 	}
 	

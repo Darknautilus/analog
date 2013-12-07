@@ -9,6 +9,8 @@
 #include <algorithm>
 #include "Rapport.h"
 #include "Config.h"
+#include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -177,11 +179,43 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 
 bool Rapport::genererRapport() const
 {
-	for(set<noeud>::iterator it=noeuds.begin();it!=noeuds.end(); ++it)
+	ofstream outPutFile;
+	if(!nomRapport.empty())
 	{
-		cout<<(*it).texte<<" ("<<(*it).nbCons<<"hits)"<<endl;
+		outPutFile.open(nomRapport);
 	}
 	
+	if (creneauMin>=0)
+	{
+		cout<<"Attention, seules les logs comprises entre "<< creneauMin << " et " << creneauMin+1 << "h seront prises en compte" << endl;
+	}
+
+	for(set<noeud>::iterator it=noeuds.begin();it!=noeuds.end(); ++it)
+	{
+		if(it->nbCons >= nbHitsMin)
+		{	
+			
+			cout<<(*it).texte<<" ("<<(*it).nbCons<<"hits)"<<endl;
+
+			if (!nomRapport.empty())
+			{
+				outPutFile << "node" << it->id << "[label=\"" << it->texte << "\"];" << endl;
+			}
+		}
+	}
+	
+	for(set<relation>::iterator it=relations.begin(); it!=relations.end(); ++it)
+	{
+		if ((it->src->nbCons >= nbHitsMin) && (it->dest->nbCons >= nbHitsMin))
+		{
+			outPutFile << "node" << it->src->id << "-> node" << it->dest->id << "[label=\"" << it->nbTot << "\"];" << endl;  
+		}
+	}
+	
+	if(!nomRapport.empty())
+	{
+		outPutFile.close();
+	}	
 
 	return true;
 }

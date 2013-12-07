@@ -148,36 +148,40 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 bool Rapport::genererRapport() const
 {
 	ofstream outPutFile;
-	if(!nomRapport.empty())
+	if(!fichierSortie())
+	{
+		return false;
+	}
+	else
 	{
 		outPutFile.open(nomRapport);
+		if(!outPutFile)
+		{
+			return false;
+		}
 	}
 	
 	afficherTopDocs(consultations.size());
 
+	outPutFile << "digraph {" << endl;
 	for(set<noeud>::iterator it=noeuds.begin();it!=noeuds.end(); ++it)
 	{
-		if(consultations.at(it->id) >= nbHitsMin)
-		{	
-			if (!nomRapport.empty())
-			{
-				outPutFile << "node" << it->id << "[label=\"" << it->texte << "\"];" << endl;
-			}
+		if(!(it->estLocal) || consultations.at(it->id) >= nbHitsMin)
+		{
+			outPutFile << "node" << it->id << " [label=\"" << it->texte << "\"];" << endl;
 		}
 	}
 	
 	for(set<relation>::iterator it=relations.begin(); it!=relations.end(); ++it)
 	{
-		if (!nomRapport.empty() && (consultations.at(it->src) >= nbHitsMin) && (consultations.at(it->dest) >= nbHitsMin))
+		if (consultations.at(it->dest) >= nbHitsMin)
 		{
-			outPutFile << "node" << it->src << "-> node" << it->dest << "[label=\"" << it->nbTot << "\"];" << endl;  
+			outPutFile << "node" << it->src << " -> node" << it->dest << " [label=\"" << it->nbTot << "\"];" << endl;  
 		}
 	}
 	
-	if(!nomRapport.empty())
-	{
-		outPutFile.close();
-	}	
+	outPutFile << "}" << endl;
+	outPutFile.close();
 
 	return true;
 }

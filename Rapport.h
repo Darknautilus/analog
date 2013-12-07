@@ -24,7 +24,7 @@ struct noeud
 	int id;
 	string texte;
 	bool estLocal;
-
+	
 	bool operator == (const noeud &n) const
 	{
 		return (this->id == n.id);
@@ -40,6 +40,12 @@ struct noeud
 		{
 			return false;
 		}
+	}
+	
+	friend ostream & operator << (ostream &stream, const noeud &n)
+	{
+		stream << "[" << n.id << "," << n.texte << "," << n.estLocal << "]";
+		return stream;
 	}
 
 };
@@ -67,7 +73,15 @@ struct relation
     }
   }
 
+	friend ostream & operator << (ostream & stream, const relation &r)
+	{
+		stream << "[" << r.src << " -> " << r.dest << "," << r.nbTot << "]";
+		return stream;
+	}
+
 };
+
+
 
 const string LOCALHOST = "http://intranet-if.insa-lyon.fr";
 const list<string> TYPES_EXCLUS {".jpg",".png",".gif",".bmp",".js",".css"};

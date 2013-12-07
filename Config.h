@@ -12,6 +12,8 @@
 
 using namespace std;
 
+const bool DEBUG = true;
+
 enum paramCode
 {
 	NULLP,

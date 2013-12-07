@@ -173,7 +173,10 @@ int main(int argc, const char **argv)
 	{
 		if(lecteur->valid())
 		{
-			rapport.ajouterLigne(ligne);
+			if(!rapport.ajouterLigne(ligne))
+			{
+				cout << "Attention, ligne " << lecteur->position() << " valide mais non ajoutée" << endl;
+			}
 			delete ligne;
 		}
 	}

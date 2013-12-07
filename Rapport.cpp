@@ -103,6 +103,10 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 		cibleId = ++dernierId;
 		noeudLocalc.id = cibleId;
 		noeuds.insert(noeudLocalc);
+		if(DEBUG)
+		{
+			cout << "Noeud " << noeudLocalc << " ajouté" << endl;
+		}
 		consultations.insert(pair<int,int>(cibleId ,1));
 	}
 	if( !refererExiste )
@@ -110,6 +114,10 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 		refId = ++dernierId; 
 		noeudLocalr.id = refId;
 		noeuds.insert(noeudLocalr);
+		if(DEBUG)
+		{
+			cout << "Noeud " << noeudLocalr << " ajouté" << endl;
+		}
 	}
 
 	//Changements dans la structure relations

@@ -57,16 +57,18 @@ namespace LecteurFichier
 			T *ligneSuivante();
 			bool endOfFile() const;
 			bool valid() const;
+			int position() const;
 
 		private:
 			ifstream ficDesc;
 			bool eof;
 			bool validline;
+			int lineNb;
 	};
 
 	template <typename T>
 	LecteurLigneFichier<T>::LecteurLigneFichier(string &nomFic) :
-			ficDesc(nomFic.c_str()), eof(false)
+			ficDesc(nomFic.c_str()), eof(false), lineNb(0)
 	{
 		if(!ficDesc.is_open())
 		{
@@ -92,10 +94,17 @@ namespace LecteurFichier
 	}
 
 	template <typename T>
+	int LecteurLigneFichier<T>::position() const
+	{
+		return lineNb;
+	}
+
+	template <typename T>
 	T *LecteurLigneFichier<T>::ligneSuivante()
 	{
 		string ligne;
 		getline(ficDesc, ligne);
+		lineNb++;
 		if(ficDesc.eof() || ficDesc.fail() || ficDesc.bad())
 		{
 			if( ficDesc.eof() )

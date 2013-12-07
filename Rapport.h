@@ -83,6 +83,8 @@ class Rapport
     bool genererRapport() const;
     void afficherTopDocs(const int) const;
 		void afficherContraintes() const;
+		bool dotFileExiste() const;
+		bool fichierSortie() const;
 
   private:
     string nomRapport;

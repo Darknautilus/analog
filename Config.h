@@ -34,7 +34,8 @@ enum generalError
 {
 	OK,
 	MISSING_ARGUMENT,
-	BAD_PARAMETER_VALUE
+	BAD_PARAMETER_VALUE,
+	EXISTING_OUTPUT_FILE
 };
 
 typedef map<generalError,string> generalErrorMap;
@@ -42,7 +43,8 @@ const generalErrorMap generalErrors =
 {
 	{OK,"Le programme s'est correctement déroulé"},
 	{MISSING_ARGUMENT,"Argument obligatoire manquant :"},
-	{BAD_PARAMETER_VALUE,"Valeur incorrecte pour le paramètre :"}
+	{BAD_PARAMETER_VALUE,"Valeur incorrecte pour le paramètre :"},
+	{EXISTING_OUTPUT_FILE,"Fichier de sortie déjà existant :"}
 };
 
 inline void printError(generalError ecode,string message = "")

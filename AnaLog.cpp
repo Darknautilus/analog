@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <cctype>
 #include <string>
 #include <stdexcept>
 #include <map>
@@ -105,7 +106,7 @@ int main(int argc, const char **argv)
 			}
 			if(creneauMin < 0 || creneauMin > 23)
 			{
-				printError(generalError::BAD_PARAMETER_VALUE, '\''+parameters.at(prevParamCode)+'\'');
+				printError(generalError::BAD_PARAMETER_VALUE, '\''+parameters.at(prevParamCode)+"' (doit être >= 0 et <= 23)");
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -146,13 +147,44 @@ int main(int argc, const char **argv)
 
 	// Initialisation du rapport
 	Rapport rapport(dotFile,nbHits,creneauMin,fileExclusion,0);
+	
+	// Si le fichier rapport existe déjà, on vérifie que l'utilisateur veut bien l'écraser
+	if(rapport.fichierSortie() && rapport.dotFileExiste())
+	{
+		cout << "Le fichier '" << dotFile << "' existe déjà, voulez-vous l'écraser ? [o/N]" << endl;
+		string rep;
+		while(true)
+		{
+			getline(cin,rep);
+			if(rep.empty() || (rep.length() == 1 && (toupper(rep[0]) == 'O' || toupper(rep[0]) == 'N')))
+			{
+				break;
+			}
+		}
+		if(rep.empty() || toupper(rep[0]) == 'N')
+		{
+			printError(EXISTING_OUTPUT_FILE, " '"+dotFile+"' ");
+			exit(EXIT_FAILURE);
+		}
+	}
+	
 	LigneLog *ligne;
 	while((ligne = lecteur->ligneSuivante()) != NULL || !lecteur->endOfFile())
 	{
 		if(lecteur->valid())
 		{
+			rapport.ajouterLigne(ligne);
 			delete ligne;
 		}
+	}
+
+	if(rapport.fichierSortie())
+	{
+		rapport.genererRapport();
+	}
+	else
+	{
+		rapport.afficherTopDocs(NB_TOP_DOCS);
 	}
 
 	delete lecteur;

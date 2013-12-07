@@ -30,6 +30,17 @@ Rapport::~Rapport()
 	noeuds.clear();
 }
 
+bool Rapport::fichierSortie() const
+{
+	return !nomRapport.empty();
+}
+
+bool Rapport::dotFileExiste() const
+{
+	ifstream tf(nomRapport.c_str());
+	return tf;
+}
+
 bool Rapport::ajouterLigne(const LigneLog *ligne)
 {
 	// Vérification paramètre temporel

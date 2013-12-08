@@ -8,9 +8,7 @@
 #define RAPPORT_H_
 
 #include <set>
-#include <time.h>
 #include <string>
-#include <list>
 
 #include "LigneLog.h"
 #include "LecteurLigneFichier.h"
@@ -81,11 +79,6 @@ struct relation
 
 };
 
-
-
-const string LOCALHOST = "http://intranet-if.insa-lyon.fr";
-const list<string> TYPES_EXCLUS {".JPG",".JPEG",".PNG",".GIF",".BMP",".JS",".CSS",".ICO"};
-const int NB_TOP_DOCS = 10;
 
 class Rapport
 {

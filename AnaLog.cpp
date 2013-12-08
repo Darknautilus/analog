@@ -39,7 +39,7 @@ int main(int argc, const char **argv)
 	bool fileExclusion = false;
 	string logFile = "";
 	string dotFile = "";
-
+	bool testMode = false;
 
 
 	// ================================= DEBUT analyse paramètres ================================================
@@ -120,6 +120,11 @@ int main(int argc, const char **argv)
 			fileExclusion = true;
 			prevParamCode = paramCode::NULLP;
 		}
+		else if( currParamCode == paramCode::TEST_MODE )
+		{
+			testMode = true;
+			prevParamCode = paramCode::NULLP;
+		}
 		else
 		{
 			prevParamCode = currParamCode;
@@ -132,6 +137,11 @@ int main(int argc, const char **argv)
 	}
 
 	// ================================= FIN analyse paramètres ================================================
+
+	if(testMode)
+	{
+		cout << "Programme lancé en session de test" << endl;
+	}
 
 	// Tentative d'ouverture du fichier et controle d'erreur	
 	LecteurLigneFichier<LigneLog> *lecteur;
@@ -149,7 +159,7 @@ int main(int argc, const char **argv)
 	Rapport rapport(dotFile,nbHits,creneauMin,fileExclusion,0);
 	
 	// Si le fichier rapport existe déjà, on vérifie que l'utilisateur veut bien l'écraser
-	if(rapport.fichierSortie() && rapport.dotFileExiste())
+	if(rapport.fichierSortie() && rapport.dotFileExiste() && !testMode)
 	{
 		cout << "Le fichier '" << dotFile << "' existe déjà, voulez-vous l'écraser ? [o/N]" << endl;
 		string rep;

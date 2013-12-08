@@ -2,7 +2,7 @@ MODE=RELEASE
 CC=g++
 CFLAGS=-std=c++11
 LDFLAGS=
-EXEC=AnaLog
+EXEC=analog
 SRC=AnaLog.cpp LigneLog.cpp Rapport.cpp 
 OBJ=$(SRC:.cpp=.o)
 
@@ -12,7 +12,7 @@ endif
 
 all: $(EXEC)
 
-AnaLog: $(OBJ)
+analog: $(OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 %.o: %.cpp

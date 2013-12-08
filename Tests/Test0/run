@@ -1,0 +1,1 @@
+../../analog --test -g output input -x -l 10 -t 3

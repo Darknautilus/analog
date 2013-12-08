@@ -32,7 +32,7 @@ struct noeud
 
 	bool operator < (const noeud &n) const
 	{
-		if(estLocal && !(n.estLocal))
+		if((estLocal && !(n.estLocal)) || (estLocal == n.estLocal && id < n.id))
 		{
 			return true;
 		}
@@ -84,7 +84,7 @@ struct relation
 
 
 const string LOCALHOST = "http://intranet-if.insa-lyon.fr";
-const list<string> TYPES_EXCLUS {".jpg",".png",".gif",".bmp",".js",".css"};
+const list<string> TYPES_EXCLUS {".JPG",".JPEG",".PNG",".GIF",".BMP",".JS",".CSS",".ICO"};
 const int NB_TOP_DOCS = 10;
 
 class Rapport

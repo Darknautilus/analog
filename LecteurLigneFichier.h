@@ -68,7 +68,7 @@ namespace LecteurFichier
 
 	template <typename T>
 	LecteurLigneFichier<T>::LecteurLigneFichier(string &nomFic) :
-			ficDesc(nomFic.c_str()), eof(false), lineNb(0)
+			ficDesc(nomFic.c_str()), eof(false), lineNb(1)
 	{
 		if(!ficDesc.is_open())
 		{

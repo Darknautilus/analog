@@ -20,9 +20,9 @@ AnaLog: $(OBJ)
 
 AnaLog.o: Config.h LecteurLigneFichier.h Rapport.h LigneLog.h
 
-Rapport.o: LecteurLigneFichier.h LigneLog.h
+Rapport.o: Config.h LecteurLigneFichier.h LigneLog.h
 
-LigneLog.o: LecteurLigneFichier.h
+LigneLog.o: Config.h LecteurLigneFichier.h Rapport.h
 
 clean:
 	@rm -rf *.o

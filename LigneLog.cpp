@@ -75,13 +75,17 @@ LigneLog::LigneLog(string &ligne)
     creneau = atoi(ldate.substr(12,2).c_str());
     int firstSlash = lcible.find("/");
     cible = lcible.substr(firstSlash,lcible.rfind(" ")-firstSlash);
-    if(lreferer == "-")
+    // Suppression des paramètres HTTP
+		int firstQM = cible.find("?");
+		cible = cible.substr(0,firstQM);
+		if(lreferer == "-")
     {
       referer = "";
     }
     else
     {
-      referer = lreferer;
+			firstQM = lreferer.find("?");
+			referer = lreferer.substr(0,firstQM);
     }
     valide = true;
   }

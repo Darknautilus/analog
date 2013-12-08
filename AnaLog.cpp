@@ -167,6 +167,8 @@ int main(int argc, const char **argv)
 			exit(EXIT_FAILURE);
 		}
 	}
+
+	rapport.afficherContraintes();
 	
 	LigneLog *ligne;
 	while((ligne = lecteur->ligneSuivante()) != NULL || !lecteur->endOfFile())
@@ -175,7 +177,7 @@ int main(int argc, const char **argv)
 		{
 			if(!rapport.ajouterLigne(ligne))
 			{
-				cout << "Attention, ligne " << lecteur->position() << " valide mais non ajoutée" << endl;
+				cout << "Attention, ligne " << lecteur->position() << " valide mais non traitée" << endl;
 			}
 			delete ligne;
 		}

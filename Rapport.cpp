@@ -228,7 +228,8 @@ bool Rapport::genererRapport() const
 	outPutFile << "digraph {" << endl;
 	for(set<noeud>::iterator it=noeuds.begin(); it!=noeuds.end(); ++it)
 	{
-		if(!(it->estLocal) || consultations.count(it->id) == 0 || consultations.at(it->id) >= nbHitsMin)
+		bool estCons = (consultations.count(it->id) > 0);
+		if(!estCons || consultations.at(it->id) >= nbHitsMin)
 		{
 			outPutFile << "node" << it->id << " [label=\"" << it->texte << "\"];" << endl;
 		}
@@ -236,7 +237,9 @@ bool Rapport::genererRapport() const
 	
 	for(set<relation>::iterator it=relations.begin(); it!=relations.end(); ++it)
 	{
-		if (consultations.count(it->dest) > 0 && consultations.at(it->dest) >= nbHitsMin)
+		bool RestCons = (consultations.count(it->src) > 0);
+		bool CestCons = (consultations.count(it->dest) > 0);
+		if ((!RestCons || (consultations.at(it->src) >= nbHitsMin)) && (!CestCons || (consultations.at(it->dest) >= nbHitsMin)))
 		{
 			outPutFile << "node" << it->src << " -> node" << it->dest << " [label=\"" << it->nbTot << "\"];" << endl;  
 		}
@@ -273,7 +276,10 @@ void Rapport::afficherTopDocs(const int nbDocs) const
 	multimap<int,int> sortedNbCons;
 	for(map<int,int>::const_iterator it = consultations.begin(); it != consultations.end(); ++it)
 	{
-		sortedNbCons.insert(pair<int,int>(it->second, it->first));
+		if(it->second >= nbHitsMin)
+		{
+			sortedNbCons.insert(pair<int,int>(it->second, it->first));
+		}
 	}
 
 	if(DEBUG)
@@ -288,24 +294,30 @@ void Rapport::afficherTopDocs(const int nbDocs) const
 		cout << endl << "========== End DEBUG infos ==========" << endl;
 	}
 
-	cout << endl << "Affichage des " << nbDocs << " documents";
-	if(nbDocs == NB_TOP_DOCS)
+	int nbDocsAff;
+	if(nbHitsMin > 1)
+	{
+		nbDocsAff = sortedNbCons.size();
+	}
+	else
+	{
+		nbDocsAff = nbDocs;
+	}
+	cout << endl << "Affichage des " << nbDocsAff << " documents";
+	if(nbDocsAff == NB_TOP_DOCS)
 	{
 		cout << " les plus consultés";
 	}
 	cout << " : " << endl << "------------------------" << endl;
 	int i = 0;
-	for(multimap<int,int>::reverse_iterator it = sortedNbCons.rbegin(); it != sortedNbCons.rend() && i < nbDocs; ++it)
+	for(multimap<int,int>::reverse_iterator it = sortedNbCons.rbegin(); it != sortedNbCons.rend() && i < nbDocsAff; ++it)
 	{
-		if(it->first >= nbHitsMin)
+		for(set<noeud>::const_iterator itset = noeuds.begin(); itset != noeuds.end() && itset->estLocal; ++itset)
 		{
-			for(set<noeud>::const_iterator itset = noeuds.begin(); itset != noeuds.end() && itset->estLocal; ++itset)
+			if(itset->id == it->second)
 			{
-				if(itset->id == it->second)
-				{
-					cout << itset->texte << " (" << it->first << " hits)" << endl;
-					break;
-				}
+				cout << itset->texte << " (" << it->first << " hits)" << endl;
+				break;
 			}
 		}
 		i++;

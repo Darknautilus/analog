@@ -151,7 +151,7 @@ int main(int argc, const char **argv)
 	}
 	catch(ErrcodeLecteurLigneFichier ellf)
 	{
-		printError(ellf," '"+logFile+"' ");	
+		printError(generalError::INPUT_FILE_OPENING_ERROR," '"+logFile+"' ");	
 		exit(EXIT_FAILURE);	
 	}
 
@@ -185,7 +185,7 @@ int main(int argc, const char **argv)
 	{
 		if(lecteur->valid())
 		{
-			if(!rapport.ajouterLigne(ligne))
+			if(!rapport.ajouterLigne(ligne) && DEBUG)
 			{
 				cout << "Attention, ligne " << lecteur->position() << " valide mais non traitée" << endl;
 			}

@@ -24,8 +24,12 @@ Rapport.o: Config.h LecteurLigneFichier.h LigneLog.h
 
 LigneLog.o: Config.h LecteurLigneFichier.h Rapport.h
 
+test: $(EXEC)
+	@make -C Tests
+
 clean:
 	@rm -rf *.o
+	@make clean -C Tests
 
 mrproper: clean
 	@rm -rf $(EXEC)

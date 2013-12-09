@@ -18,20 +18,6 @@
 using namespace std;
 using namespace LecteurFichier;
 
-
-
-paramCode isParam(string &p)
-{
-	for(paramMap::const_iterator it = parameters.cbegin(); it != parameters.cend(); ++it)
-	{
-		if(it->second.compare(p) == 0)
-		{
-			return it->first;
-		}
-	}
-	return paramCode::NULLP;
-}
-
 int main(int argc, const char **argv)
 {
 	int creneauMin = -1;	

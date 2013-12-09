@@ -13,11 +13,15 @@
 
 using namespace std;
 
+// ==================================== Constantes ======================================
+
 const bool DEBUG = false;
 
 const string LOCALHOST = "http://intranet-if.insa-lyon.fr";
 const list<string> TYPES_EXCLUS {".JPG",".JPEG",".PNG",".GIF",".BMP",".JS",".CSS",".ICO"};
 const int NB_TOP_DOCS = 10;
+
+// ==================================== Options du programme ======================================
 
 enum paramCode
 {
@@ -38,6 +42,25 @@ const paramMap parameters =
 	{PARAM_HMIN,"-t"},
 	{TEST_MODE,"--test"}
 };
+
+/*
+ *	Détermine si une chaîne donnée est une option du programme
+ *	E : un objet string
+ *	R : le code de l'option correspondante ou NULLP sinon
+ */
+paramCode isParam(string &p)
+{
+	for(paramMap::const_iterator it = parameters.cbegin(); it != parameters.cend(); ++it)
+	{
+		if(it->second.compare(p) == 0)
+		{
+			return it->first;
+		}
+	}
+	return paramCode::NULLP;
+}
+
+// ==================================== Erreurs ======================================
 
 enum generalError
 {

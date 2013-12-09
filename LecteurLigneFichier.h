@@ -16,7 +16,11 @@
 namespace LecteurFichier
 {
 	using namespace std;
-	
+
+	/*
+	 * Interface décrivant une ligne pouvant être traitée par LecteurLigneFichier
+	 * La méthode estValide() doit être redéfinie dans les classes héritant de LigneFichier
+	 */	
 	class LigneFichier
 	{
 		protected:
@@ -25,12 +29,7 @@ namespace LecteurFichier
 			virtual ~LigneFichier() {}
 	};
 
-	/*
-	 * class LecteurLigneFichier
-	 *
-	 * Cette classe générique a pour but de fournir une interface simple pour la lecture d'un fichier texte ligne par ligne.
-	 * C'est pourquoi elle est réutilisable, la seule contrainte étant de l'utiliser avec une spécialisation de la classe abstraite LigneFichier dont la déclaration est disponible ci-dessus.
-	*/
+
 	enum ErrcodeLecteurLigneFichier
 	{
 		ERR_OUVERTURE
@@ -46,24 +45,45 @@ namespace LecteurFichier
 		cerr << ecode;
 		cout << ")" << endl;
 	}
-
-	template <typename T>
+	
+	/*
+	 * class LecteurLigneFichier
+	 *
+	 * Cette classe générique a pour but de fournir une interface simple pour la lecture d'un fichier texte ligne par ligne.
+	 * C'est pourquoi elle est réutilisable, la seule contrainte étant de l'utiliser avec une spécialisation de la classe abstraite LigneFichier dont la déclaration est disponible ci-dessus.
+	*/
+	template <typename T> // T doit hériter de LigneFichier !
 	class LecteurLigneFichier
 	{
 		public:
-			LecteurLigneFichier(string &nomFic);
+			/*
+			 * Tente d'ouvrir le fichier dont le nom est donné en paramètres
+			 * En cas d'erreur, soulève l'exception ErrcodeLecteurLigneFichier::ERR_OUVERTURE
+			 */
+			LecteurLigneFichier(string &);
 			virtual ~LecteurLigneFichier();
 
+			/*
+			 * Lit la ligne suivante dans ficDesc et construit l'objet descripteur de ligne
+			 * R : un pointeur vers l'objet T construit ou NULL en cas d'erreur
+			 * Attention l'objet retourné doit être détruit manuellement !
+			 */
 			T *ligneSuivante();
 			bool endOfFile() const;
+			/*
+			 * Indique si la dernière ligne lue est valide ou non
+			 */
 			bool valid() const;
+			/*
+			 * Donne le numéro de la ligne à laquelle se trouve le descripteur ficDesc
+			 */
 			int position() const;
 
 		private:
-			ifstream ficDesc;
-			bool eof;
-			bool validline;
-			int lineNb;
+			ifstream ficDesc; // Le descripteur de fichier
+			bool eof; // Retourné par endOfFile()
+			bool validline; // Retourné par valid()
+			int lineNb; // Retourné par position()
 	};
 
 	template <typename T>
@@ -103,6 +123,7 @@ namespace LecteurFichier
 	T *LecteurLigneFichier<T>::ligneSuivante()
 	{
 		string ligne;
+		// Récupère la ligne suivante dans le descripteur de fichiers
 		getline(ficDesc, ligne);
 		lineNb++;
 		if(ficDesc.eof() || ficDesc.fail() || ficDesc.bad())

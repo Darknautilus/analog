@@ -21,7 +21,7 @@ struct noeud
 {
 	int id;
 	string texte;
-	bool estLocal;
+	bool estLocal; // Indique si le noeud est un fichier du serveur analysé ou non
 	
 	bool operator == (const noeud &n) const
 	{
@@ -50,9 +50,9 @@ struct noeud
 
 struct relation
 {
-  int src;
-  int dest;
-  int nbTot;
+  int src; // Id du noeud source
+  int dest; // Id du noeud destination
+  int nbTot; // Nombre de relations entre les mêmes noeuds
 	
 	bool operator == (const relation &r) const
 	{
@@ -86,22 +86,40 @@ class Rapport
     Rapport(string& _nomRapport, int _nbHitsMin, int _creneauMin, bool _exclusionFichiers, int dernierId);
     virtual ~Rapport();
 
+		/*
+		 * Traite la ligne en ajoutant ses infos dans les conteneurs noeuds, consultations et relations
+		 * Attention, l'objet n'est pas supprimé et doit donc être supprimé par l'appelant
+		 * R : Vrai si l'ajout s'est bien déroulé et faux sinon
+		 */
     bool ajouterLigne(const LigneLog *);
+		/*
+		 * Génère le rapport de "nomRapport" avec les données actuelles
+		 * R : Vrai si le fichier est généré et Faux sinon
+		 */
     bool genererRapport() const;
+		/*
+		 * Affiche les n documents les plus consultés selon l'état actuel de consultations (avec n passé en paramètre)
+		 */
     void afficherTopDocs(const int) const;
 		void afficherContraintes() const;
+		/*
+		 * Retourne vrai si le fichier de sortie existe et faux sinon
+		 */
 		bool dotFileExiste() const;
+		/*
+		 * Retourne faux si nomRapport est à sa valeur par défaut (vide) et vrai sinon
+		 */
 		bool fichierSortie() const;
 
   private:
-    string nomRapport;
-    int nbHitsMin;
-    int creneauMin;
-    bool exclusionFichiers;
-    int dernierId;
+    string nomRapport; // Nom du fichier de sortie
+    int nbHitsMin; // Nombre minimal de consultations nécessaire pour que le noeud soit traité
+    int creneauMin; // Créneau du noeud nécessaire pour qu'il soit traité 
+    bool exclusionFichiers; // Vaut vrai si l'utilisateur veut exclure certaines extensions (voir Config.h)
+    int dernierId; // Id du dernier noeud ajouté
     
     set<noeud> noeuds;
-    map<int,int> consultations;
+    map<int,int> consultations; // Nombre de consultations pour chaque noeud (indiqué par son id)
 		set<relation> relations;
 		
 };

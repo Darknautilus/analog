@@ -17,12 +17,16 @@ using namespace std;
 
 const bool DEBUG = false;
 
+// Adresse du serveur local (pour identifier les referers comme étant du serveur local)
 const string LOCALHOST = "http://intranet-if.insa-lyon.fr";
+// Liste des types exclus par l'option -x
 const list<string> TYPES_EXCLUS {".JPG",".JPEG",".PNG",".GIF",".BMP",".JS",".CSS",".ICO"};
+// Nombre de documents à afficher lors d'une exécution sans option
 const int NB_TOP_DOCS = 10;
 
 // ==================================== Options du programme ======================================
 
+// Représente les options du programme
 enum paramCode
 {
 	NULLP,

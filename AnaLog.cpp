@@ -20,12 +20,12 @@ using namespace LecteurFichier;
 
 int main(int argc, const char **argv)
 {
-	int creneauMin = -1;	
-	int nbHits = 1;
-	bool fileExclusion = false;
-	string logFile = "";
-	string dotFile = "";
-	bool testMode = false;
+	int creneauMin = -1; // Si > -1, on n'analyse que les documents consultés entre creneauMin et creneauMin+1 (heures)
+	int nbHits = 1; // On n'affichera que les documents consultés nbHits fois ou plus
+	bool fileExclusion = false; // Si vrai, on exclut certains types de documents (voir Config.h)
+	string logFile = ""; // Le nom du fichier LOG en entrée
+	string dotFile = ""; // Le nom du fichier Dot en sortie
+	bool testMode = false; // Le mode test permet de passer certaines actions utilisateur pour une exécution plus rapide
 
 
 	// ================================= DEBUT analyse paramètres ================================================
@@ -35,10 +35,13 @@ int main(int argc, const char **argv)
 		printError(generalError::MISSING_ARGUMENT, " nom du fichier log");
 		exit(EXIT_FAILURE);
 	}
-
-	string currParameter;
-	paramCode currParamCode;
-	paramCode prevParamCode = paramCode::NULLP;
+	
+	/*
+	 * Parcours de la liste des argc paramètres
+	 */
+	string currParameter; // Le paramètre i tel qu'il a été entré
+	paramCode currParamCode; // Le paramètre i après analyse par isParam()
+	paramCode prevParamCode = paramCode::NULLP; // Le paramètre i-1
 	for( int i=1 ; i<argc ; i++ )
 	{
 		currParameter = argv[i];
@@ -144,7 +147,7 @@ int main(int argc, const char **argv)
 	// Initialisation du rapport
 	Rapport rapport(dotFile,nbHits,creneauMin,fileExclusion,0);
 	
-	// Si le fichier rapport existe déjà, on vérifie que l'utilisateur veut bien l'écraser
+	// Si le fichier rapport existe déjà, on vérifie que l'utilisateur veut bien l'écraser (passé en mode de test)
 	if(rapport.fichierSortie() && rapport.dotFileExiste() && !testMode)
 	{
 		cout << "Le fichier '" << dotFile << "' existe déjà, voulez-vous l'écraser ? [o/N]" << endl;
@@ -165,7 +168,8 @@ int main(int argc, const char **argv)
 	}
 
 	rapport.afficherContraintes();
-	
+
+	// Parcours du fichier ligne par ligne	
 	LigneLog *ligne;
 	while((ligne = lecteur->ligneSuivante()) != NULL || !lecteur->endOfFile())
 	{
@@ -179,10 +183,12 @@ int main(int argc, const char **argv)
 		}
 	}
 
+	// Si l'utilisateur avait choisi de générer un fichier, on le génère
 	if(rapport.fichierSortie())
 	{
 		rapport.genererRapport();
 	}
+	// Sinon on affiche juste les documents les plus consultés
 	else
 	{
 		rapport.afficherTopDocs(NB_TOP_DOCS);

@@ -48,7 +48,7 @@ const paramMap parameters =
  *	E : un objet string
  *	R : le code de l'option correspondante ou NULLP sinon
  */
-paramCode isParam(string &p)
+inline paramCode isParam(string &p)
 {
 	for(paramMap::const_iterator it = parameters.cbegin(); it != parameters.cend(); ++it)
 	{

@@ -16,6 +16,7 @@
 
 using namespace std;
 
+// Foncteur servant à mettre une chaîne de caractères en majuscules
 struct stoupper
 { 
 	char operator()(char c) const 
@@ -64,14 +65,18 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 	{
 		return false;
 	}
-	
+
+	/*
+	 * Si l'utilisateur a choisi d'exclure certains fichiers, ce bloc sert à parcourir la liste des extensions à exclure (cf Config.h)
+	 * Ce parcours n'est pas sensible à la casse.
+	 */	
 	if(exclusionFichiers)
 	{
 		int dotPos = ligne->cible.rfind('.');
 		if(dotPos != string::npos)
 		{
 			string extension = ligne->cible.substr(dotPos,ligne->cible.length()-dotPos);
-			transform(extension.begin(),extension.end(),extension.begin(),stoupper());
+			transform(extension.begin(),extension.end(),extension.begin(),stoupper()); // Met la chaîne en majuscules
 			for( list<string>::const_iterator it = TYPES_EXCLUS.begin() ; it != TYPES_EXCLUS.end() ; ++it )
 			{
 				if(it->compare(extension) == 0)
@@ -82,11 +87,13 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 		}
 	}
 
-	//Changements dans la structure noeuds
+	/*
+	 * Ajout des noeuds (cibles + referers) dans le set
+	 */
 	noeud noeudLocalc;
 	noeud noeudLocalr;
 	noeudLocalc.texte = ligne->cible;
-	noeudLocalc.estLocal = true;
+	noeudLocalc.estLocal = true; // Une cible est toujours locale
 	string strLocale = ligne->referer.substr(0,LOCALHOST.length());    
 	if(strLocale.compare(LOCALHOST) == 0)
 	{
@@ -106,7 +113,11 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 	{
 		refererExiste = true; // Sert à éviter l'insertion dans le set et le parcours des boucles ci-après
 	}
-	
+
+	/*
+	 * On parcours les noeuds jusqu'à la fin du set ou bien jusqu'à ce que le referer et la cible aient été trouvés
+	 * On peut noter que les conditions dans les if sont optimisées pour n'exécuter les comparaisons de chaînes qu'en dernier recours.
+	 */	
 	for (set<noeud>::const_iterator it = noeuds.begin(); it != noeuds.end() && (!cibleExiste || !refererExiste) ; ++it)
 	{
 		if (!cibleExiste && it->estLocal && it->texte.compare(noeudLocalc.texte) == 0)
@@ -163,22 +174,25 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 		}
 	}
 
+	// S'il n'y a pas de referer, il ne peut y avoir de relation
 	if(!noeudLocalr.texte.empty())
 	{
-		//Changements dans la structure relations
+		/*
+		 * Ajout des relations dans le set
+		 */
 		relation relLoc;
 		relLoc.dest = noeudLocalc.id;
 		relLoc.src = noeudLocalr.id;
 		relLoc.nbTot = 1;
-		bool relEx = false;
+		bool relationExiste = false;
 
 		int oldTot;
 		set<relation>::iterator it; 
-		for (it = relations.begin() ; it != relations.end() && !relEx ; ++it)
+		for (it = relations.begin() ; it != relations.end() && !relationExiste ; ++it)
 		{
 			if(*it == relLoc)
 			{
-				relEx = true;
+				relationExiste = true;
 				oldTot = it->nbTot;
 				if(DEBUG)
 				{
@@ -186,7 +200,7 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 				}
 			}
 		}
-		if(relEx)
+		if(relationExiste)
 		{
 			it--; // Annule la pré-incrémentation dans le for precedent.
 			relations.erase(it);
@@ -210,6 +224,7 @@ bool Rapport::ajouterLigne(const LigneLog *ligne)
 bool Rapport::genererRapport() const
 {
 	ofstream outPutFile;
+	// Teste si l'utilisateur avait bien demandé un fichier Dot
 	if(!fichierSortie())
 	{
 		return false;
@@ -273,6 +288,7 @@ void Rapport::afficherTopDocs(const int nbDocs) const
 		}
 	}
 
+	// On inverse la map en triant par nombre de consultations
 	multimap<int,int> sortedNbCons;
 	for(map<int,int>::const_iterator it = consultations.begin(); it != consultations.end(); ++it)
 	{
